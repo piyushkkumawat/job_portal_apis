@@ -67,7 +67,7 @@ exports.create = (req, res) => {
 
 // Get jobs by id
 
-exports.findById = (req, res) =>{
+exports.getJobPost = (req, res) =>{
     console.log(req.body.status);
     let dataArray = [];
     let date_ob = new Date();

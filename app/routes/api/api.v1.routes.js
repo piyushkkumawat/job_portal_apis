@@ -157,7 +157,7 @@ var uploadFeed = multer({ storage: feed_storage })
 
   app.post('/jobpostcreate', verifylogin, jobpostcollection.create);
   app.patch('/updatejobpost/:userId', verifylogin, jobpostcollection.update);
-  app.post('/getjobposts', verifylogin, jobpostcollection.findById);
+  app.post('/getjobposts', verifylogin, jobpostcollection.getJobPost);
 
   /* =================
      Get Industry Type
