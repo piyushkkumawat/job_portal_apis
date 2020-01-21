@@ -219,7 +219,7 @@ var uploadFeed = multer({ storage: feed_storage })
   /* ==============
      job filters
      ==============*/
-  app.post('/swip_filter',verifylogin, employer_filter.filter);
+  app.post('/employer_swip_filter',verifylogin, employer_filter.filter);
 
   // 5 Dec DEV
  

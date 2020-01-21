@@ -73,6 +73,11 @@ var uploadIqQuestionImage = multer({
      ===========================*/
 
     app.post('/candidate_update_basicinfo',verifylogin, candidate.createBasicInfo);
+
+      /*==========================
+     candidate Filter
+     ===========================*/
+     app.post('/candidate_swip_filter', candidate.filter);
     
      /*==========================
      education details API
@@ -127,4 +132,6 @@ var uploadIqQuestionImage = multer({
      ===========================*/
 
      app.get('/get_iqQuestion_result', iqQuestions.findIqResult);
+
+  
   }

@@ -1,11 +1,12 @@
 const bcrypt = require('bcryptjs');
 var db = require('../../../config/db.config');
-var fs = require('fs');
 const Candidate = db.candidatemodel;
 const Registration = db.registration;
+const JobPost = db.jobpostcollection;
+const JobAlert = db.jobalert;
+const sequelize = db.sequelize;
 const jwt = require('jsonwebtoken');
 var md5 = require('md5');
-var ageCalculator = require('age-calculator');
 let {AgeFromDateString, AgeFromDate} = require('age-calculator');
 let profile_pic_name;
 let ageFromString;
@@ -208,3 +209,128 @@ exports.findProfile = (req, res) => {
   
 };
 
+
+//Swip Filter
+
+exports.filter = (req, res) => {
+    if (!req.body.user_id) {
+        return res.json({
+            success: false,
+            message: "User Id can not be empty"
+        })
+    }
+   
+    JobAlert.findOne({ where: { user_id: req.body.user_id } }).then(data => {
+        // let date_ob = new Date();
+        
+        let ts = Date.now();
+
+        let date_ob = new Date(ts);
+        let date = date_ob.getDate();
+        let month = date_ob.getMonth() + 1;
+        let year = date_ob.getFullYear();
+        let dateString = year+'-'+month+'-'+date;
+        console.log(dateString);
+        let dataArray = [];
+        if(data){
+            // JobPost.findAll().then(jobdata=>{
+                    // Object.keys(jobdata).forEach(function (key) {
+                    //     console.log(jobdata[key].last_date_to_apply);
+                    //     if(jobdata[key].last_date_to_apply >= date_ob){
+                    //         dataArray.push(jobdata[key]);
+                    //     }
+                    // })
+                    // res.json({
+                    //     data:dataArray
+                    // })
+               
+                const query = `select
+                user.email,
+                user.fullName,
+                user.company_name,
+                user.phoneno,
+                user.role_type,
+                user.enable_location,
+                user.profile_visibility,
+                user.industry,
+                user.category,
+                user.profile_pic,
+
+                company_bio.profile_pic,
+                company_bio.bio_info,
+                company_bio.requirement_video,
+
+                company_info.designation,
+                company_info.company_type,
+                company_info.company_formed_year,
+                company_info.company_website,
+                company_info.company_location,
+                company_info.company_lat,
+                company_info.company_lng,
+                company_info.company_branches,
+                company_info.company_logo,
+
+                jobpostcollection.job_title,
+                jobpostcollection.job_description,
+                jobpostcollection.job_type,
+                jobpostcollection.qualification,
+                jobpostcollection.shift,
+                jobpostcollection.cabs,
+                jobpostcollection.from_annaul_ctc,
+                jobpostcollection.to_annual_ctc,		  
+                jobpostcollection.company_industry_location,
+                jobpostcollection.company_lat,
+                jobpostcollection.company_lng,
+                jobpostcollection.process,
+                jobpostcollection.job_role,
+                jobpostcollection.notice_period,
+                jobpostcollection.from_age,
+                jobpostcollection.to_age,
+                jobpostcollection.gender,
+                jobpostcollection.no_of_positions,
+                jobpostcollection.allow_disabled,
+                jobpostcollection.interview_panel_ids,
+                jobpostcollection.last_date_to_apply,
+                jobpostcollection.last_date_of_post,
+                jobpostcollection.special_comments,
+                jobpostcollection.commitments,
+                jobpostcollection.screening_questions,
+                jobpostcollection.mode_of_interview
+                
+                from jobpostcollection
+                inner join user ON (user.id = '`+data.user_id +`')
+                left join company_bio ON (company_bio.user_id =  '`+data.user_id+`')
+                left join company_info  ON (company_info.user_id =  '`+data.user_id+`')
+                where (jobpostcollection.last_date_to_apply >= '`+dateString+`')
+                and
+                (
+                       jobpostcollection.job_title like '%`+data.designation + `%'
+                    or jobpostcollection.qualification like '%`+data.qualification + `%'
+                    or jobpostcollection.shift like '%`+data.shift + `%'
+                    or jobpostcollection.to_annual_ctc like '%`+data.to_salary_range + `%'
+                    or user.industry like '%`+data.industry_category + `%'
+                    or user.category like '%`+data.category + `%'
+                    or jobpostcollection.job_type like '%`+data.typeof_employement + `%'
+                    
+                )
+                
+                `;
+                 sequelize.query(query, { type: sequelize.QueryTypes.SELECT })
+                .then(function (users) {
+                    res.json({
+                        success: true,
+                        data: users
+                    })
+                })
+          }
+           
+          
+            // sequelize.query(sql, { type: sequelize.QueryTypes.SELECT })
+            //     .then(function (users) {
+            //         res.json({
+            //             success: true,
+            //             data: users
+            //         })
+            //     })
+         })
+}

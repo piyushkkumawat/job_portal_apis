@@ -69,10 +69,10 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.STRING
       },
       last_date_to_apply: {
-          type: Sequelize.DATE
+          type: Sequelize.DATEONLY
       },
       last_date_of_post: {
-          type: Sequelize.DATE
+          type: Sequelize.DATEONLY
       },
       special_comments: {
           type: Sequelize.STRING
