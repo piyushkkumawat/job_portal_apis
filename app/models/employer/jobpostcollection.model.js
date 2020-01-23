@@ -71,7 +71,7 @@ module.exports = (sequelize, Sequelize) => {
       last_date_to_apply: {
           type: Sequelize.DATEONLY
       },
-      last_date_of_post: {
+      date_of_post: {
           type: Sequelize.DATEONLY
       },
       special_comments: {

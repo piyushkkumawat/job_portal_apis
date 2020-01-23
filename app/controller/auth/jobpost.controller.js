@@ -33,13 +33,12 @@ exports.create = (req, res) => {
         no_of_positions: req.body.no_of_positions,
         allow_disabled: req.body.allow_disabled,
         last_date_to_apply: req.body.last_date_to_apply,
-        last_date_of_post: req.body.last_date_of_post,
+        date_of_post: req.body.last_date_of_post,
         special_comments: req.body.special_comments,
         commitments: req.body.commitments,
         screening_questions: req.body.screening_questions,
         mode_of_interview: req.body.mode_of_interview,
     });
-    // console.log(newjobpost);
     newjobpost.save()
         .then(data => {
             let temp;
@@ -135,7 +134,7 @@ exports.update = (req, res) => {
         interviewerid: req.body.interviewerid,
         interview_round: req.body.interview_round,
         last_date_to_apply: req.body.last_date_to_apply,
-        last_date_of_post: req.body.last_date_of_post,
+        date_of_post: req.body.last_date_of_post,
         special_comments: req.body.special_comments,
         mode_of_interview: req.body.mode_of_interview,
         screening_questions: req.body.screening_questions,

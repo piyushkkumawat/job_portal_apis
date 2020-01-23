@@ -77,7 +77,7 @@ var uploadIqQuestionImage = multer({
       /*==========================
      candidate Filter
      ===========================*/
-     app.post('/candidate_swip_filter', candidate.filter);
+     app.post('/candidate_swip_filter',verifylogin, candidate.filter);
     
      /*==========================
      education details API

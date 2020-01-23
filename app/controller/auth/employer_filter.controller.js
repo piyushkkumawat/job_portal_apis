@@ -1,20 +1,23 @@
 var db = require('../../../config/db.config');
 var JobAlert = db.jobalert;
 const sequelize = db.sequelize;
+var async = require("async");
 
-exports.filter = (req, res) => {
+exports.filter =async (req, res) => {
     if (!req.body.user_id) {
         return res.json({
             success: false,
             message: "User Id can not be empty"
         })
     }
+    
     JobAlert.findOne({ where: { user_id: req.body.user_id } }).then(data => {
-           
-        const sql = `select 
+        
+        if(!data){
+            const sql = `select 
+            user.id,
             user.email,
             user.fullName,
-            user.company_name,
             user.phoneno,
             user.role_type,
             user.enable_location,
@@ -23,51 +26,82 @@ exports.filter = (req, res) => {
             user.category,
             user.profile_pic,
 
-            company_info.designation,
-            company_info.company_type,
-            company_info.company_formed_year,
-            company_info.company_website,
-            company_info.company_location,
-            company_info.company_lat,
-            company_info.company_lng,
-            company_info.company_branches,
-            company_info.company_logo,
+            candidate_basic_info.date_of_birth,
+            candidate_basic_info.gender,
+            candidate_basic_info.language_knows,
+            candidate_basic_info.marital_status,
+            candidate_basic_info.height,
+            candidate_basic_info.weight,
+            candidate_basic_info.differently_abled,
+            candidate_basic_info.differently_abled_details,
+            candidate_basic_info.age,
 
-            company_bio.profile_pic,
-            company_bio.bio_info,
-            company_bio.requirement_video,
+            candidate_bio.profile_pic,
+            candidate_bio.other_img1,
+            candidate_bio.other_img2,
+            candidate_bio.candidate_idcard,
+            candidate_bio.candidate_info,
+            candidate_bio.special_telent,
+            candidate_bio.social_responsiblity,
+            candidate_bio.sports,
+            candidate_bio.candidate_resume_video,
+            candidate_bio.candidate_resume
+           
             
-            job_alert.user_id,
-            job_alert.from_salary_range,
-            job_alert.to_salary_range
             from job_alert
             inner join user ON (user.id = job_alert.user_id)
-            left join company_bio ON (company_bio.user_id = job_alert.user_id)
-            left join company_info ON (company_info.user_id = job_alert.user_id)
+            left join candidate_basic_info ON (candidate_basic_info.user_id = job_alert.user_id)
+            left join candidate_bio ON (candidate_bio.user_id = job_alert.user_id)
             where 
-            job_alert.role_type=1 and
-            
-            (qualification like '%`+ data.qualification + `%' 
-            or job_alert.designation like '%`+ data.designation + `%' 
-            or shift like '%`+ data.shift + `%'
-            or candidate_location like '%`+ data.candidate_location + `%'
-            or typeof_employement like '%`+ data.typeof_employement + `%'
-            or employement_category like '%`+ data.employement_category + `%'
-            or industry_category like '%`+ data.industry_category + `%'
-            or (job_alert.from_salary_range >= `+ data.from_salary_range + ` 
-                and job_alert.from_salary_range <= `+ data.to_salary_range + `) 
-
-            or
-                (job_alert.to_salary_range >= `+ data.from_salary_range + ` 
-                and job_alert.to_salary_range <= `+ data.to_salary_range +`)
-            )
+            user.role_type=2 
             `;
+            let dataArray = [];
+            let educationArray = [];
+
             sequelize.query(sql, { type: sequelize.QueryTypes.SELECT })
                 .then(function (users) {
-                    res.json({
-                        success: true,
-                        data: users
-                    })
+                    async function fun1() {
+                        return  Object.keys(users).forEach(function (key) {
+                                const userId = users[key].id;
+                                //console.log(userId);
+                                db.education.findAll({ where: { user_id: userId} }).then(data => {
+                                    dataArray.push(data); 
+                                    //console.log(key);
+                                    
+                                })
+                            });
+                      }
+
+                      fun1().then(()=>{
+                          console.log("Asdasdasd");
+                      });
+                    
+                    // Object.keys(users).forEach(function (key) {
+                    //     const userId = users[key].id;
+                    //     //console.log(userId);
+                    //     db.education.findAll({ where: { user_id: userId} }).then(data => {
+                    //         dataArray.push(data); 
+                    //         //console.log(key);
+                            
+                    //     })
+                    // });
+                    //sleep(60);
+
+                    // res.json({
+                    //     success: true,
+                    //     data: dataArray
+                    // });
+                    
+                    
+            }).catch(err=>{
+                res.json({
+                    success: false,
+                    message: "Something went to wrong! "+err 
                 })
+            })
+            
+        }
+           
+
     })
 }

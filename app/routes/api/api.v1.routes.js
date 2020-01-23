@@ -21,7 +21,7 @@ module.exports = (app) => {
   const email = require('../../../helper/custom.helper');
   const verifylogin = require('../../middleware/token.verify.middleware');
 
-  const candidate = require('../../controller/auth/candidate.controller');
+  // const candidate = require('../../controller/auth/candidate.controller');
   const registration = require('../../controller/auth/registration.controller');
   
   // const join = require('../../controller/auth/join.controller');

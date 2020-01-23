@@ -102,7 +102,6 @@ exports.updatecompanyinfo = (req, res) => {
                 res.json({
                     status: 200,
                     success: true,
-                    data: data,
                     message: "update successfully"
                 })
             }).catch(err => {

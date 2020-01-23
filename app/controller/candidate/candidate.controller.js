@@ -230,7 +230,6 @@ exports.filter = (req, res) => {
         let month = date_ob.getMonth() + 1;
         let year = date_ob.getFullYear();
         let dateString = year+'-'+month+'-'+date;
-        console.log(dateString);
         let dataArray = [];
         if(data){
             // JobPost.findAll().then(jobdata=>{
@@ -245,6 +244,7 @@ exports.filter = (req, res) => {
                     // })
                
                 const query = `select
+                user.id,
                 user.email,
                 user.fullName,
                 user.company_name,
@@ -269,7 +269,8 @@ exports.filter = (req, res) => {
                 company_info.company_lng,
                 company_info.company_branches,
                 company_info.company_logo,
-
+                company_info.company_description,
+                
                 jobpostcollection.job_title,
                 jobpostcollection.job_description,
                 jobpostcollection.job_type,
@@ -291,17 +292,18 @@ exports.filter = (req, res) => {
                 jobpostcollection.allow_disabled,
                 jobpostcollection.interview_panel_ids,
                 jobpostcollection.last_date_to_apply,
-                jobpostcollection.last_date_of_post,
+                jobpostcollection.date_of_post,
                 jobpostcollection.special_comments,
                 jobpostcollection.commitments,
                 jobpostcollection.screening_questions,
                 jobpostcollection.mode_of_interview
                 
                 from jobpostcollection
-                inner join user ON (user.id = '`+data.user_id +`')
-                left join company_bio ON (company_bio.user_id =  '`+data.user_id+`')
-                left join company_info  ON (company_info.user_id =  '`+data.user_id+`')
+                inner join user ON (user.id = jobpostcollection.user_id)
+                left join company_bio ON (company_bio.user_id =  jobpostcollection.user_id)
+                left join company_info  ON (company_info.user_id =  jobpostcollection.user_id)
                 where (jobpostcollection.last_date_to_apply >= '`+dateString+`')
+                and user.role_type = 1
                 and
                 (
                        jobpostcollection.job_title like '%`+data.designation + `%'
@@ -321,16 +323,89 @@ exports.filter = (req, res) => {
                         success: true,
                         data: users
                     })
+                }).catch(err=>{
+                    res.json({
+                        success: false,
+                        message: "Something went to wrong! "+err
+                    })
                 })
           }
-           
-          
-            // sequelize.query(sql, { type: sequelize.QueryTypes.SELECT })
-            //     .then(function (users) {
-            //         res.json({
-            //             success: true,
-            //             data: users
-            //         })
-            //     })
+          if(!data){
+            const query = `select
+                user.id,
+                user.email,
+                user.fullName,
+                user.company_name,
+                user.phoneno,
+                user.role_type,
+                user.enable_location,
+                user.profile_visibility,
+                user.industry,
+                user.category,
+                user.profile_pic,
+
+                company_bio.profile_pic,
+                company_bio.bio_info,
+                company_bio.requirement_video,
+
+                company_info.designation,
+                company_info.company_type,
+                company_info.company_formed_year,
+                company_info.company_website,
+                company_info.company_location,
+                company_info.company_lat,
+                company_info.company_lng,
+                company_info.company_branches,
+                company_info.company_logo,
+                company_info.company_description,
+                
+                jobpostcollection.job_title,
+                jobpostcollection.job_description,
+                jobpostcollection.job_type,
+                jobpostcollection.qualification,
+                jobpostcollection.shift,
+                jobpostcollection.cabs,
+                jobpostcollection.from_annaul_ctc,
+                jobpostcollection.to_annual_ctc,		  
+                jobpostcollection.company_industry_location,
+                jobpostcollection.company_lat,
+                jobpostcollection.company_lng,
+                jobpostcollection.process,
+                jobpostcollection.job_role,
+                jobpostcollection.notice_period,
+                jobpostcollection.from_age,
+                jobpostcollection.to_age,
+                jobpostcollection.gender,
+                jobpostcollection.no_of_positions,
+                jobpostcollection.allow_disabled,
+                jobpostcollection.interview_panel_ids,
+                jobpostcollection.last_date_to_apply,
+                jobpostcollection.date_of_post,
+                jobpostcollection.special_comments,
+                jobpostcollection.commitments,
+                jobpostcollection.screening_questions,
+                jobpostcollection.mode_of_interview
+                
+                from jobpostcollection
+                inner join user ON (user.id = jobpostcollection.user_id)
+                left join company_bio ON (company_bio.user_id =  jobpostcollection.user_id)
+                left join company_info  ON (company_info.user_id =  jobpostcollection.user_id)
+                where (jobpostcollection.last_date_to_apply >= '`+dateString+`')
+                and user.role_type = 1
+                
+                `;
+                 sequelize.query(query, { type: sequelize.QueryTypes.SELECT })
+                .then(function (users) {
+                    res.json({
+                        success: true,
+                        data: users
+                    })
+                }).catch(err=>{
+                    res.json({
+                        success: false,
+                        message: "Something went to wrong! "+err
+                    })
+                })
+          }
          })
 }
