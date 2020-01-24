@@ -15,6 +15,7 @@ module.exports = (app) => {
   const companymember = require('../../controller/auth/company_member.controller');
   const jobalert = require('../../controller/auth/jobalert.controller');
   const employer_filter = require('../../controller/auth/employer_filter.controller');
+  const bookmarks = require('../../controller/auth/bookmarks.controller');
   var multer = require('multer');
   const path = require('path');
   
@@ -53,9 +54,10 @@ module.exports = (app) => {
   
   let storage_bio1 = multer.diskStorage({
     destination: function (req, file, callback) {
-      if (file.mimetype === 'image/jpeg' || file.mimetype === 'text/plain' || file.mimetype === 'text/plainapplication/pdf' || file.mimetype === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || file.mimetype === 'image/png') {
+      let ext = path.extname(file.originalname)
+       if (ext === '.jpeg' || ext === '.txt' || ext === '.pdf' || ext === '.png' || ext === '.doc' || ext === 'docx' || ext === '.jpg') {
           callback(null, 'public/employer_file/profile/')
-        } else if (file.mimetype === 'video/mp4' ||file.mimetype === 'application/x-mpegURL' ||file.mimetype === 'video/MP2T') {
+        }else if(ext === '.mp4' || ext === '.MP2T' || ext === '.mov'){
           callback(null, 'public/employer_file/requirementVideo/')
         } else {
           callback({ error: 'Mime type not supported' })
@@ -224,6 +226,8 @@ var uploadFeed = multer({ storage: feed_storage })
   // 5 Dec DEV
  
   app.put('/user_update',verifylogin, registration.partial_update)
+
+  app.post('/addbookmarks', bookmarks.create);
  
 
 }

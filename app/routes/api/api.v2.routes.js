@@ -21,7 +21,7 @@ module.exports = (app) => {
         let ext = path.extname(file.originalname)
         if (ext === '.jpeg' || ext === '.txt' || ext === '.pdf' || ext === '.png' || ext === '.doc' || ext === 'docx' || ext === '.jpg') {
             callback(null, 'public/candidate_file/candidateResumes/')
-        }else if(ext === '.mp4' || ext === '.MP2T'){
+        }else if(ext === '.mp4' || ext === '.MP2T' || ext === '.mov'){
             callback(null, 'public/candidate_file/candidateResumeVideos/')
         }else{
           callback({ error: 'file type not supported' })

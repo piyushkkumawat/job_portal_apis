@@ -30,6 +30,7 @@ db.userquestionans= require('../app/models/user_question_ans.model')(sequelize,S
 db.jobalert = require('../app/models/jobalert.model')(sequelize,Sequelize);
 db.questionary= require('../app/models/questionary.model')(sequelize,Sequelize);
 db.feedlikes= require('../app/models/feed_likes.model')(sequelize,Sequelize);
+db.bookmarks= require('../app/models/bookmark.model')(sequelize,Sequelize);
 
 //Admin Routes
 db.Admin= require('../app/models/admin/adminModel.model')(sequelize,Sequelize);
