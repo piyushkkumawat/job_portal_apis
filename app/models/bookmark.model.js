@@ -3,6 +3,9 @@ module.exports = (sequelize, Sequelize) => {
       user_id: {
         type: Sequelize.STRING
       },
+      save_id: {
+        type: Sequelize.STRING
+      },
       role_type: {
         type: Sequelize.STRING
       }

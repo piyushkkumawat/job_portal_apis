@@ -70,6 +70,7 @@ db.candidate_questions= require('../app/models/candidate/candidate_questions.mod
 db.candidate_bio= require('../app/models/candidate/candidate_bio.model')(sequelize,Sequelize);
 db.iq_questions= require('../app/models/candidate/iqQuestion.model')(sequelize,Sequelize);
 db.iqtestsubmit= require('../app/models/candidate/candidateIqTestSubmit.model')(sequelize,Sequelize);
+db.swip_match = require('../app/models/candidate/swip_match.model')(sequelize,Sequelize);
 
 
 db.registration.hasOne(db.candidate_bio,{foreignKey: 'user_id'});

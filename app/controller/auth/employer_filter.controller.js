@@ -1,12 +1,10 @@
 var db = require('../../../config/db.config');
 const Sequelize = require('sequelize');
 var JobAlert = db.jobalert;
-const sequelize = db.sequelize;
 const Op = Sequelize.Op;
-var async = require("async");
-let educationArray = [];
-let finalArray = [];
-let dataObject;
+const geolib = require('geolib');
+const finalDataArray = [];
+
 
 exports.filter =async (req, res) => {
     if (!req.body.user_id) {
@@ -17,7 +15,8 @@ exports.filter =async (req, res) => {
     }
     
     JobAlert.findOne({ where: { user_id: req.body.user_id } }).then(data => {
-
+        var emp_lat = data.candidate_lat;
+        var emp_long = data.candidate_lng;
         if(data){
             db.registration.findAll({
                 where:{role_type: 2},
@@ -101,10 +100,23 @@ exports.filter =async (req, res) => {
                   },
                  ],
                }).then(data =>{
-                res.json({
-                    success:true,
-                    data:data
-                })
+                Object.keys(data).forEach(function (key) {
+                    let candidate_lat = data[key]["job_alert"].candidate_lat;
+                    let candidate_lng = data[key]["job_alert"].candidate_lng;
+
+                    let meters = geolib.getDistance(
+                        { latitude: emp_lat, longitude: emp_long },
+                        { latitude: candidate_lat, longitude: candidate_lng }
+                    ) 
+                    kilometers = meters * 0.001
+                    if(kilometers <= 150){
+                        finalDataArray.push(data);
+                    }
+                    })
+                    res.json({
+                        success:true,
+                        data:finalDataArray
+                    })
             }) 
         }
         

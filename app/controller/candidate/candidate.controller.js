@@ -10,6 +10,8 @@ var md5 = require('md5');
 let {AgeFromDateString, AgeFromDate} = require('age-calculator');
 let profile_pic_name;
 let ageFromString;
+const geolib = require('geolib');
+const finalDataArray = [];
 
 // Create and Save a new User
 exports.create = (req, res) => {
@@ -222,7 +224,8 @@ exports.filter = (req, res) => {
    
     JobAlert.findOne({ where: { user_id: req.body.user_id } }).then(data => {
         // let date_ob = new Date();
-        
+        // var emp_lat = data.candidate_lat;
+        // var emp_long = data.candidate_lng;
         let ts = Date.now();
 
         let date_ob = new Date(ts);
@@ -319,6 +322,20 @@ exports.filter = (req, res) => {
                 `;
                  sequelize.query(query, { type: sequelize.QueryTypes.SELECT })
                 .then(function (users) {
+                    Object.keys(users).forEach(function (key) {
+                        // let company_lat = users[key].company_lat;
+                        // console.log(company_lat);
+                        // let candidate_lng = data[key]["job_alert"].candidate_lng;
+    
+                        // let meters = geolib.getDistance(
+                        //     { latitude: emp_lat, longitude: emp_long },
+                        //     { latitude: candidate_lat, longitude: candidate_lng }
+                        // ) 
+                        // kilometers = meters * 0.001
+                        // if(kilometers <= 150){
+                        //     finalDataArray.push(data);
+                        // }
+                        })
                     res.json({
                         success: true,
                         data: users

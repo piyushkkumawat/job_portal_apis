@@ -68,6 +68,18 @@ exports.create = (req, res) => {
 
 exports.getJobPost = (req, res) =>{
     console.log(req.body.status);
+    if(!req.body.user_id){
+        res.json({
+            success: false,
+            message: "user id can not be empty"
+        })
+    }
+    if(!req.body.status){
+        res.json({
+            success: false,
+            message: "status can not be empty"
+        })
+    }
     let dataArray = [];
     let date_ob = new Date();
     Jobpostcollection.findAll({
@@ -88,7 +100,7 @@ exports.getJobPost = (req, res) =>{
         // status == 1 ,active jobs 
         if(req.body.status == 1){
             Object.keys(data).forEach(function (key) {
-                if(data[key].last_date_of_post >= date_ob){
+                if(data[key].date_of_post >= date_ob){
                     dataArray.push(data[key]);
                 }
             })

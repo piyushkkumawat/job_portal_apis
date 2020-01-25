@@ -14,8 +14,15 @@ exports.create = (req, res) =>{
             message: "user_id can not be empty"
         }) 
      }
+     if(!req.body.save_id){
+        return res.json({
+            success: false,
+            message: "save_id can not be empty"
+        }) 
+     }
     const newbookmark = new db.bookmarks({
         user_id: req.body.user_id,
+        save_id: req.body.save_id,
         role_type: req.body.role_type,
     });
     newbookmark.save().then(data=>{

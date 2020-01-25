@@ -9,6 +9,8 @@ module.exports = (app) => {
     const candidatequestions = require('../../controller/candidate/candidate_questions.controller');
     const candidatebio = require('../../controller/candidate/candidate_bio.controller');
     const iqQuestions = require('../../controller/candidate/iqQuestions.controller');
+    const swip_match = require('../../controller/candidate/swip_match.controller');
+
     
 
 
@@ -132,6 +134,12 @@ var uploadIqQuestionImage = multer({
      ===========================*/
 
      app.get('/get_iqQuestion_result', iqQuestions.findIqResult);
+
+      /*==========================
+     candidate swip match
+     ===========================*/
+
+     app.post('/swip_match', swip_match.create);
 
   
   }
