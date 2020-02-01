@@ -227,7 +227,11 @@ var uploadFeed = multer({ storage: feed_storage })
  
   app.put('/user_update',verifylogin, registration.partial_update)
 
-  app.post('/addbookmarks', bookmarks.create);
- 
+  app.post('/addbookmarks',verifylogin, bookmarks.create);
+
+  /* ==============
+     get saved jobs
+     ==============*/
+  app.post('/getsavedjobs', verifylogin, bookmarks.getsavedjobs);
 
 }

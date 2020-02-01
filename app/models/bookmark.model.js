@@ -6,6 +6,9 @@ module.exports = (sequelize, Sequelize) => {
       save_id: {
         type: Sequelize.STRING
       },
+      job_id:{
+        type: Sequelize.STRING
+      },
       role_type: {
         type: Sequelize.STRING
       }

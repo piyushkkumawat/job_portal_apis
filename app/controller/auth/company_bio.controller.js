@@ -21,26 +21,48 @@ exports.create = (req, res) => {
             }
         })
     }
-        const newCompanyBio = new CompanyBio({
-            user_id: req.body.user_id,
-            profile_pic: profile_pic_name,
-            bio_info: req.body.bio_info,
-            requirement_video: videopath
-        });
-        newCompanyBio.save().then(data =>{
-            return res.json({
-                success:true,
-                data: data,
-                message: "Data insert Successfully"
+    CompanyBio.findOne({ where: { user_id: req.body.user_id } }).then(user => {
+        if(user){
+            CompanyBio.update({
+                profile_pic: profile_pic_name,
+                bio_info: req.body.bio_info,
+                requirement_video: videopath
+            },{
+                where: { user_id: req.body.user_id }
+            }).then(data=>{
+                res.json({
+                    status: 200,
+                    success: true,
+                    message:"update successfully",
+                })
+            }).catch(err=>{
+                res.json({
+                    success: false,
+                    message:"Something went to wrong! "+err,
+                })
             })
-        }).catch(err =>{
-            return res.json({
-                success: false,
-                message: "Something went to wrong "+err
+        }
+        if(!user){
+            const newCompanyBio = new CompanyBio({
+                user_id: req.body.user_id,
+                profile_pic: profile_pic_name,
+                bio_info: req.body.bio_info,
+                requirement_video: videopath
+            });
+            newCompanyBio.save().then(data =>{
+                return res.json({
+                    success:true,
+                    data: data,
+                    message: "Data insert Successfully"
+                })
+            }).catch(err =>{
+                return res.json({
+                    success: false,
+                    message: "Something went to wrong "+err
+                })
             })
-        })
-    
-   
+        }
+    })
  };
 
 

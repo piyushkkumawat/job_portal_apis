@@ -15,11 +15,15 @@ exports.filter =async (req, res) => {
     }
     
     JobAlert.findOne({ where: { user_id: req.body.user_id } }).then(data => {
-        var emp_lat = data.candidate_lat;
-        var emp_long = data.candidate_lng;
+      
         if(data){
+            var emp_lat = data.candidate_lat;
+            var emp_long = data.candidate_lng;
             db.registration.findAll({
                 where:{role_type: 2},
+                order:[
+                    [db.work,'to_date','DESC']
+                ],
                 attributes: [
                     ['id','user_id'],
                     'email','fullName','phoneno','role_type','enable_location','profile_visibility','industry','category','recovery_email'],
@@ -30,9 +34,9 @@ exports.filter =async (req, res) => {
                         'profile_pic', 'other_img1', 'other_img2', 'candidate_idcard', 'candidate_info', 'special_telent', 'social_responsiblity', 'sports', 'candidate_resume_video', 'candidate_resume']
                     },
                     {
-                        model: db.work,
                         attributes: [['id','workId'],
-                        'fresher','name_of_company','designation','total_years_of_experience','from_date','to_date']
+                        'fresher','name_of_company','designation','total_years_of_experience','from_date','to_date'],
+                        model: db.work
                    },
                    {
                     model: db.education,
@@ -100,6 +104,7 @@ exports.filter =async (req, res) => {
                   },
                  ],
                }).then(data =>{
+                   
                 Object.keys(data).forEach(function (key) {
                     let candidate_lat = data[key]["job_alert"].candidate_lat;
                     let candidate_lng = data[key]["job_alert"].candidate_lng;
@@ -110,19 +115,27 @@ exports.filter =async (req, res) => {
                     ) 
                     kilometers = meters * 0.001
                     if(kilometers <= 150){
-                        finalDataArray.push(data);
+                        finalDataArray.push(data[key]);
                     }
                     })
                     res.json({
                         success:true,
                         data:finalDataArray
                     })
+            }).catch(err=>{
+                res.json({
+                    success:false,
+                    message:"Something went to wrong! "+err
+                })
             }) 
         }
         
         if(!data){
             db.registration.findAll({
                 where:{role_type: 2},
+                order:[
+                    [db.work,'to_date','DESC']
+                ],
                 attributes: [
                     ['id','user_id'],
                     'email','fullName','phoneno','role_type','enable_location','profile_visibility','industry','category','recovery_email'],
@@ -158,9 +171,14 @@ exports.filter =async (req, res) => {
                   },
                  ],
                }).then(data =>{
+                    res.json({
+                        success:true,
+                        data:data
+                    })
+            }).catch(err=>{
                 res.json({
-                    success:true,
-                    data:data
+                    success:false,
+                    messsage:"something went to wrong! "+err
                 })
             })   
         }

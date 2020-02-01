@@ -86,10 +86,13 @@ db.companyinfo.hasMany(db.memberinfo, {foreignKey: 'company_id'});
 
 // candidate profile join
 
-db.registration.hasOne(db.candidatemodel,{foreignKey: 'user_id'});
-db.registration.hasMany(db.work, {foreignKey: 'user_id'});
-db.registration.hasMany(db.education, {foreignKey: 'user_id'});
-db.registration.hasOne(db.iqtestsubmit,  {foreignKey: 'user_id'});
+// db.registration.hasOne(db.candidatemodel,{foreignKey: 'user_id'});
+// db.candidatemodel.belongsTo(db.work, {foreignKey: 'user_id'});
+// db.registration.hasMany(db.education, {foreignKey: 'user_id'});
+// db.registration.hasOne(db.iqtestsubmit,  {foreignKey: 'user_id'});
+
+
+// db.candidatemodel.belongsTo(db.iqtestsubmit,  {foreignKey: 'user_id'});
 
 
 module.exports = db;

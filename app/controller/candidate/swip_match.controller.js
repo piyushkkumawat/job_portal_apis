@@ -76,6 +76,7 @@ exports.create = (req,res) =>{
                     employer_id: req.body.employer_id,
                     candidate_id:req.body.candidate_id,
                     job_id: req.body.job_id,
+                    question_ans_json: req.body.question_ans_json,
                     candidate_swip: 1,
                 });
                 newSwip.save().then(data=>{

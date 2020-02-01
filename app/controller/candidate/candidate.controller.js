@@ -11,7 +11,7 @@ let {AgeFromDateString, AgeFromDate} = require('age-calculator');
 let profile_pic_name;
 let ageFromString;
 const geolib = require('geolib');
-const finalDataArray = [];
+
 
 // Create and Save a new User
 exports.create = (req, res) => {
@@ -323,9 +323,9 @@ exports.filter = (req, res) => {
                  sequelize.query(query, { type: sequelize.QueryTypes.SELECT })
                 .then(function (users) {
                     Object.keys(users).forEach(function (key) {
-                        // let company_lat = users[key].company_lat;
-                        // console.log(company_lat);
-                        // let candidate_lng = data[key]["job_alert"].candidate_lng;
+                        let company_lat = users[key].company_lat;
+                        console.log(company_lat);
+                        let candidate_lng = users[key]["job_alert"].candidate_lng;
     
                         // let meters = geolib.getDistance(
                         //     { latitude: emp_lat, longitude: emp_long },

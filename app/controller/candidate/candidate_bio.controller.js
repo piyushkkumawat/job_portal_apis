@@ -47,30 +47,60 @@ exports.create = (req, res) => {
         console.log("video",videopath);
         console.log("otherimg1",otherimg1);
         console.log("otherimg2",otherimg2);
-        const newCandidateBio = new Candidatebio({
-            user_id: req.body.user_id,
-            profile_pic: profile_pic_name,
-            other_img1: otherimg1,
-            other_img2: otherimg2,
-            candidate_idcard: idcard,
-            candidate_info: req.body.candidate_info,
-            special_telent: req.body.special_telent,
-            social_responsiblity: req.body.social_responsiblity,
-            sports: req.body.sports,
-            candidate_resume_video: videopath,
-            candidate_resume: resume
-        });
-        newCandidateBio.save().then(data => {
-            return res.json({
-                success: true,
-                message: "Data insert successfully"
-            })
-        }).then(err => {
-           return res.json({
-                success: false,
-                message: "Something went to wrong " + err
-            })
-        });
+        Candidatebio.findOne({ where: { user_id: req.body.user_id } }).then(user => {
+            if(!user){
+                const newCandidateBio = new Candidatebio({
+                    user_id: req.body.user_id,
+                    profile_pic: profile_pic_name,
+                    other_img1: otherimg1,
+                    other_img2: otherimg2,
+                    candidate_idcard: idcard,
+                    candidate_info: req.body.candidate_info,
+                    special_telent: req.body.special_telent,
+                    social_responsiblity: req.body.social_responsiblity,
+                    sports: req.body.sports,
+                    candidate_resume_video: videopath,
+                    candidate_resume: resume
+                });
+                newCandidateBio.save().then(data => {
+                    return res.json({
+                        success: true,
+                        message: "Update successfully",
+                    })
+                }).then(err => {
+                   return res.json({
+                        success: false,
+                        message: "Something went to wrong " + err
+                    })
+                });
+            }else{
+                Candidatebio.update({
+                    profile_pic: profile_pic_name,
+                    other_img1: otherimg1,
+                    other_img2: otherimg2,
+                    candidate_idcard: idcard,
+                    candidate_info: req.body.candidate_info,
+                    special_telent: req.body.special_telent,
+                    social_responsiblity: req.body.social_responsiblity,
+                    sports: req.body.sports,
+                    candidate_resume_video: videopath,
+                    candidate_resume: resume
+                },{
+                    where:{user_id: req.body.user_id}
+                }).then(data=>{
+                    res.json({
+                        message: "Update successfully",
+                        success: true,
+                    });
+                }).catch(err=>{
+                    return res.json({
+                            success: false,
+                            message: "Something went to wrong " + err
+                        })
+                })
+            }
+
+        })
         // console.log(profile_pic_name);
 
     }

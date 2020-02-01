@@ -1,8 +1,13 @@
 var db = require('../../../config/db.config');
 
 
+
+db.registration.hasOne(db.candidatemodel,{foreignKey: 'user_id'});
+db.candidatemodel.belongsTo(db.work, {foreignKey: 'user_id'});
+db.work.belongsTo(db.education, {foreignKey: 'user_id'});
+db.registration.hasOne(db.iqtestsubmit,  {foreignKey: 'user_id'});
+
 exports.findAll = (req, res) => {
-    console.log(req.body);
     db.registration.findOne({
        
         include: [
@@ -93,25 +98,29 @@ exports.findProfileSetting = (req, res) => {
 
     if(req.body.role_type == 2){
         db.registration.findOne({
+            where:{id: req.body.user_id},
+            order:[
+                [db.work,'to_date','DESC']
+            ],
             attributes: [
                 ['id','user_id'],
                 'email','fullName','phoneno','role_type','enable_location','profile_visibility','industry','category','recovery_email'],
             include: [
                 {   
-                    where:{user_id: req.body.user_id},
                     model: db.candidate_bio,
                     attributes: [['id','candidateBioId'],
                     'profile_pic', 'other_img1', 'other_img2', 'candidate_idcard', 'candidate_info', 'special_telent', 'social_responsiblity', 'sports', 'candidate_resume_video', 'candidate_resume']
                 },
                 {
-                    model: db.work,
+                    
                     attributes: [['id','workId'],
-                    'fresher','name_of_company','designation','total_years_of_experience','from_date','to_date']
+                    'fresher','name_of_company','designation','total_years_of_experience','from_date','to_date'],
+                    model: db.work
                },
                {
                 model: db.education,
                 attributes: [['id','educationId'],
-                'highest_qualification','name_institution','year_of_passing',]
+                'highest_qualification','name_institution','year_of_passing']
                },
                {
                 model: db.candidatemodel,
@@ -127,6 +136,7 @@ exports.findProfileSetting = (req, res) => {
                 model: db.iqtestsubmit,
                 attributes: ['resultIqTest'],
                },
+              
              ],
            }).then(data =>{
             res.json({
