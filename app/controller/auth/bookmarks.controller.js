@@ -134,7 +134,6 @@ exports.getsavedjobs = (req,res) =>{
     }
 
     if(req.body.role_type == 1){
-        console.log("ASdad");
         db.bookmarks.findAll({
             attributes:[['id','bookmarkId'],'save_id','role_type'],
             where:{user_id: req.body.user_id},

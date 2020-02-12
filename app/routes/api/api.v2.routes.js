@@ -139,7 +139,7 @@ var uploadIqQuestionImage = multer({
      candidate swip match
      ===========================*/
 
-     app.post('/swip_match', swip_match.create);
+     app.post('/swip_match',verifylogin, swip_match.create);
 
   
   }

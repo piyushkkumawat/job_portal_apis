@@ -5,7 +5,9 @@ var db = require('../../../config/db.config');
 db.registration.hasOne(db.candidatemodel,{foreignKey: 'user_id'});
 db.candidatemodel.belongsTo(db.work, {foreignKey: 'user_id'});
 db.work.belongsTo(db.education, {foreignKey: 'user_id'});
+db.registration.hasMany(db.userquestionans, {foreignKey: 'user_id'});
 db.registration.hasOne(db.iqtestsubmit,  {foreignKey: 'user_id'});
+
 
 exports.findAll = (req, res) => {
     db.registration.findOne({
@@ -71,15 +73,24 @@ exports.findProfileSetting = (req, res) => {
                     attributes: [['id','jobalertId'],['designation','jobalert_designation'],
                     'qualification','shift','candidate_location', 'candidate_lat', 'candidate_lng', 'typeof_employement','employement_category','industry_category','from_salary_range','to_salary_range']
                 },
+                {
+                    attributes: ['question_id','answer'],  
+                    model: db.userquestionans
+                  },
                 {   
                     model: db.companyinfo,
                     attributes: [['id','companyId'],'designation','company_type','company_formed_year','company_website','company_location','company_lat','company_lng','company_branches','company_description','company_logo'],
                     include:[
                         {
+                            attributes:[['companyType','companyName']],
+                            model: db.companytype,
+                            as: "companyType"
+                        },
+                        {
                             model: db.memberinfo,
                             attributes: [['id','memberId'],
                             'member_email_id','member_phoneno','member_name','member_designation','member_specialization']
-                        }
+                        },
                     ]
                 },
              ],
@@ -131,6 +142,10 @@ exports.findProfileSetting = (req, res) => {
                 model: db.jobalert,
                 attributes: [['id','jobalertId'],['designation','jobalert_designation'],
                 'qualification','shift','candidate_location', 'candidate_lat', 'candidate_lng', 'typeof_employement','employement_category','industry_category','from_salary_range','to_salary_range']
+              },
+              {
+                attributes: ['question_id','answer'],  
+                model: db.userquestionans
               },
               {
                 model: db.iqtestsubmit,

@@ -16,6 +16,8 @@ module.exports = (app) => {
   const jobalert = require('../../controller/auth/jobalert.controller');
   const employer_filter = require('../../controller/auth/employer_filter.controller');
   const bookmarks = require('../../controller/auth/bookmarks.controller');
+  const swip_match = require('../../controller/candidate/swip_match.controller');
+  const common_controller = require('../../controller/auth/common.controller');
   var multer = require('multer');
   const path = require('path');
   
@@ -233,5 +235,26 @@ var uploadFeed = multer({ storage: feed_storage })
      get saved jobs
      ==============*/
   app.post('/getsavedjobs', verifylogin, bookmarks.getsavedjobs);
+
+   /* ==============
+     get candidates matched related with jobs
+     ==============*/
+  app.post('/getcandidatesjobs',verifylogin, swip_match.getcandidatesjobs);   
+
+   /* ==============
+     view Applicantes matched related with jobs
+     ==============*/
+  app.post('/viewapplicants',verifylogin, jobpostcollection.viewapplicants);   
+
+  /* ==============
+    Get branches
+     ==============*/
+     app.get('/branches',verifylogin, common_controller.getbranches);   
+
+     /* ==============
+    Get company name
+     ==============*/
+     app.get('/companyname', common_controller.getcompanyname);   
+
 
 }

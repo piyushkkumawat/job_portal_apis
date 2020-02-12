@@ -1,7 +1,11 @@
 var db = require('../../../config/db.config');
 const Jobpostcollection = db.jobpostcollection;
 const InterviewPanel = db.interviewpanel;
+const sequelize = db.sequelize;
+const Sequelize = require('sequelize');
+const Op = Sequelize.Op;
 
+db.swip_match.belongsTo(db.work, {foreignKey: 'job_id'});
 
 exports.create = (req, res) => {
     if(!req.body.user_id){
@@ -67,6 +71,7 @@ exports.create = (req, res) => {
 // Get jobs by id
 
 exports.getJobPost = (req, res) =>{
+    let query;
     console.log(req.body.status);
     if(!req.body.user_id){
         res.json({
@@ -80,48 +85,63 @@ exports.getJobPost = (req, res) =>{
             message: "status can not be empty"
         })
     }
-    let dataArray = [];
-    let date_ob = new Date();
-    Jobpostcollection.findAll({
-        where:{user_id: req.body.user_id}
-    }).then(data =>{
-          // status == 0 ,expired jobs 
+       let ts = Date.now();
+
+        let date_ob = new Date(ts);
+        let date = date_ob.getDate();
+        let month = date_ob.getMonth() + 1;
+        let year = date_ob.getFullYear();
+        let dateString = year+'-'+month+'-'+date;
         if(req.body.status == 0){
-            Object.keys(data).forEach(function (key) {
-                if(data[key].last_date_of_post < date_ob){
-                    dataArray.push(data[key]);
-                }
-            })
-            res.json({
-                success: true,
-                data: dataArray
-            })
+            query = `select 
+            * ,
+            (SELECT count(*) FROM swip_match where swip_match.job_id = jobpostcollection.id AND swip_match.candidate_swip=1) as total_candidate_swip
+            from jobpostcollection
+            where (user_id = '`+req.body.user_id+`')
+            and  (date_of_post < '`+dateString+`')
+             `;
         }
-        // status == 1 ,active jobs 
         if(req.body.status == 1){
-            Object.keys(data).forEach(function (key) {
-                if(data[key].date_of_post >= date_ob){
-                    dataArray.push(data[key]);
-                }
-            })
-            res.json({
-                success: true,
-                data: dataArray
-            })
+            query = `select 
+            *,
+            (SELECT count(*) FROM swip_match where swip_match.job_id = jobpostcollection.id AND swip_match.candidate_swip=1) as total_candidate_swip
+             from jobpostcollection
+            where (user_id = '`+req.body.user_id+`')
+            and  (date_of_post >= '`+dateString+`')
+             `;
         }
-//    status == 2 , all expired and active jobs 
         if(req.body.status == 2){
-            res.json({
-                success: true,
-                data: data
-            })
+            query = `
+            select 
+            * ,
+            (SELECT count(*) FROM swip_match where swip_match.job_id = jobpostcollection.id AND swip_match.candidate_swip=1) as total_candidate_swip
+            from jobpostcollection
+            where (jobpostcollection.user_id = '`+req.body.user_id+`')
+             `;
         }
-    }).catch(err =>{
+    
+    sequelize.query(query, { type: sequelize.QueryTypes.SELECT })
+    .then(function (users) {
+       if(users.length == 0){
         res.json({
             success: false,
-            error: err
+            message: "Data not found"
+        })
+       }else{
+            res.json({
+                success: true,
+                message: "Data found",
+                data: users
+            })
+       }
+       
+    }).catch(err=>{
+        res.json({
+            success: false,
+            message: "Something went to wrong! "+err
         })
     })
+    
 }
 
 exports.update = (req, res) => {
@@ -166,3 +186,38 @@ exports.update = (req, res) => {
         res.json(err);
     })
 };
+
+exports.viewapplicants = (req, res) =>{
+    query = `
+    select 
+    swip_match.candidate_id,
+    swip_match.job_id,
+    swip_match.employer_swip,
+    swip_match.candidate_swip,
+    swip_match.question_ans_json,
+
+    user.fname,
+    user.lname,
+
+    candidate_bio.profile_pic
+    
+    from swip_match
+    left join user ON (user.id =  swip_match.candidate_id)
+    left join candidate_bio ON (candidate_bio.user_id =  swip_match.candidate_id)
+    where (swip_match.job_id = '`+req.body.job_id+`')
+     `;
+     sequelize.query(query, { type: sequelize.QueryTypes.SELECT })
+        .then(function (users) {
+            res.json({
+                success: true,
+                message: "Data found",
+                data: users
+            })
+        
+        }).catch(err=>{
+            res.json({
+                success: false,
+                message: "Something went to wrong! "+err
+            })
+        })
+}

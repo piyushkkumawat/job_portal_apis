@@ -31,6 +31,8 @@ db.jobalert = require('../app/models/jobalert.model')(sequelize,Sequelize);
 db.questionary= require('../app/models/questionary.model')(sequelize,Sequelize);
 db.feedlikes= require('../app/models/feed_likes.model')(sequelize,Sequelize);
 db.bookmarks= require('../app/models/bookmark.model')(sequelize,Sequelize);
+db.branches = require('../app/models/branches.model')(sequelize,Sequelize);
+db.companyname = require('../app/models/companyName.model')(sequelize,Sequelize);
 
 //Admin Routes
 db.Admin= require('../app/models/admin/adminModel.model')(sequelize,Sequelize);
@@ -78,21 +80,15 @@ db.registration.hasOne(db.candidatemodel,{foreignKey: 'user_id'});
 db.registration.hasOne(db.jobalert, {foreignKey: 'user_id'});
 
 // company profile join
-
-db.registration.hasOne(db.companyinfo, {foreignKey: 'user_id'});
 db.registration.hasOne(db.companybio, {foreignKey: 'user_id'});
+db.registration.hasOne(db.companyinfo, {foreignKey: 'user_id'});
+
+// db.companybio.belongsTo(db.work, {foreignKey: 'user_id'});
 db.companyinfo.hasMany(db.memberinfo, {foreignKey: 'company_id'});
 
-
-// candidate profile join
-
-// db.registration.hasOne(db.candidatemodel,{foreignKey: 'user_id'});
-// db.candidatemodel.belongsTo(db.work, {foreignKey: 'user_id'});
-// db.registration.hasMany(db.education, {foreignKey: 'user_id'});
-// db.registration.hasOne(db.iqtestsubmit,  {foreignKey: 'user_id'});
+db.companyinfo.belongsTo(db.companytype, { as: 'companyType',  foreignKey: 'company_type', targetKey: 'id'});
 
 
-// db.candidatemodel.belongsTo(db.iqtestsubmit,  {foreignKey: 'user_id'});
 
 
 module.exports = db;

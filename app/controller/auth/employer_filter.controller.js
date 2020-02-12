@@ -22,7 +22,7 @@ exports.filter =async (req, res) => {
             db.registration.findAll({
                 where:{role_type: 2},
                 order:[
-                    [db.work,'to_date','DESC']
+                    [db.work,'to_date','DESC'],
                 ],
                 attributes: [
                     ['id','user_id'],
@@ -108,7 +108,7 @@ exports.filter =async (req, res) => {
                 Object.keys(data).forEach(function (key) {
                     let candidate_lat = data[key]["job_alert"].candidate_lat;
                     let candidate_lng = data[key]["job_alert"].candidate_lng;
-
+                    
                     let meters = geolib.getDistance(
                         { latitude: emp_lat, longitude: emp_long },
                         { latitude: candidate_lat, longitude: candidate_lng }
@@ -186,3 +186,4 @@ exports.filter =async (req, res) => {
 
     })
 }
+

@@ -11,6 +11,7 @@ let {AgeFromDateString, AgeFromDate} = require('age-calculator');
 let profile_pic_name;
 let ageFromString;
 const geolib = require('geolib');
+const finalDataArray = [];
 
 
 // Create and Save a new User
@@ -224,8 +225,7 @@ exports.filter = (req, res) => {
    
     JobAlert.findOne({ where: { user_id: req.body.user_id } }).then(data => {
         // let date_ob = new Date();
-        // var emp_lat = data.candidate_lat;
-        // var emp_long = data.candidate_lng;
+         
         let ts = Date.now();
 
         let date_ob = new Date(ts);
@@ -233,19 +233,10 @@ exports.filter = (req, res) => {
         let month = date_ob.getMonth() + 1;
         let year = date_ob.getFullYear();
         let dateString = year+'-'+month+'-'+date;
-        let dataArray = [];
         if(data){
-            // JobPost.findAll().then(jobdata=>{
-                    // Object.keys(jobdata).forEach(function (key) {
-                    //     console.log(jobdata[key].last_date_to_apply);
-                    //     if(jobdata[key].last_date_to_apply >= date_ob){
-                    //         dataArray.push(jobdata[key]);
-                    //     }
-                    // })
-                    // res.json({
-                    //     data:dataArray
-                    // })
-               
+            var emp_lat = data.candidate_lat;
+            var emp_long = data.candidate_lng;
+            
                 const query = `select
                 user.id,
                 user.email,
@@ -259,12 +250,15 @@ exports.filter = (req, res) => {
                 user.category,
                 user.profile_pic,
 
+                company_bio.id as companyBioId,
                 company_bio.profile_pic,
                 company_bio.bio_info,
                 company_bio.requirement_video,
 
+                company_info.id as companyInfoId,
                 company_info.designation,
-                company_info.company_type,
+                company_info.company_type as companyTypeId,
+                company_type.companyType,
                 company_info.company_formed_year,
                 company_info.company_website,
                 company_info.company_location,
@@ -274,11 +268,13 @@ exports.filter = (req, res) => {
                 company_info.company_logo,
                 company_info.company_description,
                 
+                jobpostcollection.id as jobpostId,
                 jobpostcollection.job_title,
                 jobpostcollection.job_description,
                 jobpostcollection.job_type,
                 jobpostcollection.qualification,
-                jobpostcollection.shift,
+                jobpostcollection.shift as shiftId,
+                shifts.shiftName,
                 jobpostcollection.cabs,
                 jobpostcollection.from_annaul_ctc,
                 jobpostcollection.to_annual_ctc,		  
@@ -299,12 +295,19 @@ exports.filter = (req, res) => {
                 jobpostcollection.special_comments,
                 jobpostcollection.commitments,
                 jobpostcollection.screening_questions,
-                jobpostcollection.mode_of_interview
+                jobpostcollection.mode_of_interview,
+
+                job_alert.typeof_employement,
+                employement_type.employementType
                 
                 from jobpostcollection
                 inner join user ON (user.id = jobpostcollection.user_id)
                 left join company_bio ON (company_bio.user_id =  jobpostcollection.user_id)
                 left join company_info  ON (company_info.user_id =  jobpostcollection.user_id)
+                left join job_alert  ON (job_alert.user_id =  jobpostcollection.user_id)
+                left join company_type  ON (company_type.id =  company_info.company_type)
+                left join employement_type ON(employement_type.id=job_alert.typeof_employement)
+                left join shifts ON(shifts.id = jobpostcollection.shift)
                 where (jobpostcollection.last_date_to_apply >= '`+dateString+`')
                 and user.role_type = 1
                 and
@@ -316,7 +319,6 @@ exports.filter = (req, res) => {
                     or user.industry like '%`+data.industry_category + `%'
                     or user.category like '%`+data.category + `%'
                     or jobpostcollection.job_type like '%`+data.typeof_employement + `%'
-                    
                 )
                 
                 `;
@@ -324,22 +326,24 @@ exports.filter = (req, res) => {
                 .then(function (users) {
                     Object.keys(users).forEach(function (key) {
                         let company_lat = users[key].company_lat;
-                        console.log(company_lat);
-                        let candidate_lng = users[key]["job_alert"].candidate_lng;
-    
-                        // let meters = geolib.getDistance(
-                        //     { latitude: emp_lat, longitude: emp_long },
-                        //     { latitude: candidate_lat, longitude: candidate_lng }
-                        // ) 
-                        // kilometers = meters * 0.001
-                        // if(kilometers <= 150){
-                        //     finalDataArray.push(data);
-                        // }
+                        let company_lng = users[key].company_lng;
+                        
+                        let meters = geolib.getDistance(
+                            { latitude: emp_lat, longitude: emp_long },
+                            { latitude: company_lat, longitude: company_lng }
+                        ) 
+                       
+                        kilometers = meters * 0.001
+                       
+                        if(kilometers <= 150){
+                            finalDataArray.push(users[key]);
+                        }
                         })
-                    res.json({
-                        success: true,
-                        data: users
-                    })
+                    
+                        res.json({
+                            success: true,
+                            data: finalDataArray
+                        })
                 }).catch(err=>{
                     res.json({
                         success: false,
@@ -366,7 +370,8 @@ exports.filter = (req, res) => {
                 company_bio.requirement_video,
 
                 company_info.designation,
-                company_info.company_type,
+                company_info.company_type as companyTypeId,
+                company_type.companyType,
                 company_info.company_formed_year,
                 company_info.company_website,
                 company_info.company_location,
@@ -380,7 +385,7 @@ exports.filter = (req, res) => {
                 jobpostcollection.job_description,
                 jobpostcollection.job_type,
                 jobpostcollection.qualification,
-                jobpostcollection.shift,
+                jobpostcollection.shift as shiftId,
                 jobpostcollection.cabs,
                 jobpostcollection.from_annaul_ctc,
                 jobpostcollection.to_annual_ctc,		  
@@ -401,12 +406,18 @@ exports.filter = (req, res) => {
                 jobpostcollection.special_comments,
                 jobpostcollection.commitments,
                 jobpostcollection.screening_questions,
-                jobpostcollection.mode_of_interview
+                jobpostcollection.mode_of_interview,
+
+                job_alert.typeof_employement,
+                employement_type.employementType
                 
                 from jobpostcollection
                 inner join user ON (user.id = jobpostcollection.user_id)
                 left join company_bio ON (company_bio.user_id =  jobpostcollection.user_id)
                 left join company_info  ON (company_info.user_id =  jobpostcollection.user_id)
+                left join job_alert  ON (job_alert.user_id =  jobpostcollection.user_id)
+                left join company_type  ON (company_type.id =  company_info.company_type)
+                left join employement_type ON(employement_type.id=job_alert.typeof_employement)
                 where (jobpostcollection.last_date_to_apply >= '`+dateString+`')
                 and user.role_type = 1
                 
