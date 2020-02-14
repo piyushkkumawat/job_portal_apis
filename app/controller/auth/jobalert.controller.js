@@ -128,11 +128,19 @@ exports.create = (req, res) => {
         })
      }
     Jobalert.findOne({ where: { user_id: req.body.user_id } }).then(user => {
-        return res.json({
-            success: true,
-            message: "data found",
-            data: user
-        })
+        if(user){
+            return res.json({
+                success: true,
+                message: "data found",
+                data: user
+            })
+        }
+        if(!user){
+            return res.json({
+                success: false,
+                message: "data not found",
+            })
+        }
     }).catch(err =>{
         return res.json({
             success: false,
@@ -140,3 +148,19 @@ exports.create = (req, res) => {
         })
     })
  }
+
+ exports.delete =(req,res)=>{
+    Jobalert.destroy({
+       where: {
+           user_id: req.body.user_id
+       }
+   }).then(() =>{
+           res.json({
+               status:true,
+               message:"Reset successfully"});          
+   }).catch(err =>{
+       res.json({
+           status:false,
+           message:"record not found " +err})
+   })
+}

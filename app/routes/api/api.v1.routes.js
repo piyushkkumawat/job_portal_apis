@@ -217,6 +217,7 @@ var uploadFeed = multer({ storage: feed_storage })
       candidate alert
       =================*/
   app.post('/jobalert', verifylogin, jobalert.create);
+  app.post('/jobalertdelete', verifylogin, jobalert.delete);
   app.post('/getJobalert', verifylogin, jobalert.findAll);
   app.put('/jobalertupdate', verifylogin, jobalert.update);
 
