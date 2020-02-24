@@ -36,6 +36,21 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.BOOLEAN,
       defaultValue: true
     },
+    location: {
+      type: Sequelize.STRING
+    },
+    lat: {
+      type: Sequelize.STRING
+    },
+    lng: {
+      type: Sequelize.STRING
+    },
+    city: {
+      type: Sequelize.STRING
+    },
+    area: {
+      type: Sequelize.STRING
+    },
     profile_visibility: {
       type: Sequelize.STRING,
     },

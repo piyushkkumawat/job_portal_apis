@@ -28,6 +28,8 @@ exports.create = (req, res) => {
         company_industry_location: req.body.company_industry_location,
         company_lat: req.body.company_lat,
         company_lng: req.body.company_lng,
+        company_city: req.body.company_city,
+        company_area: req.body.company_area,
         process: req.body.process,
         job_role: req.body.job_role,
         notice_period: req.body.notice_period,

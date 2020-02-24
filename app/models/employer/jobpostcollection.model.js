@@ -40,6 +40,12 @@ module.exports = (sequelize, Sequelize) => {
       company_lng: {
         type: Sequelize.STRING
       },
+      company_city: {
+        type: Sequelize.STRING
+      },
+      company_area: {
+        type: Sequelize.STRING
+      },
       process: {
         type: Sequelize.STRING
       },

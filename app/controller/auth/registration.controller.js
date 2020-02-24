@@ -12,7 +12,7 @@ let isSocialLogin;
 let userPassHash;
 // Create and Save a new User
 exports.create = (req, res) => {
-    console.log(req.body);
+    
     Registration.findOne({
         where: {
             [Op.or]: [{ email: req.body.email },
@@ -89,9 +89,14 @@ exports.create = (req, res) => {
                 lname: req.body.lname,
                 profile_pic: profile_pic_name,
                 enable_location: req.body.enable_location,
+                location :req.body.location,
+                lat: req.body.lat,
+                lng: req.body.lng,
+                city: req.body.city,
+                area: req.body.area,
                 profile_visibility: req.body.profile_visibility,
             })
-                .then(function (user) {
+                .then(user => {
                     // you can now access the newly created user
                     var token = jwt.sign({ id: user.id }, process.env.SECRET, {
                         expiresIn: 86400 // expires in 24 hours
@@ -117,9 +122,6 @@ exports.create = (req, res) => {
 
         }
     })
-
-
-
 };
 
 

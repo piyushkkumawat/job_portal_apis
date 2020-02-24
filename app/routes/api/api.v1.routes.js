@@ -257,5 +257,10 @@ var uploadFeed = multer({ storage: feed_storage })
      ==============*/
      app.get('/companyname', common_controller.getcompanyname);   
 
+      /* ==============
+    Get candidate and employer by location 
+     ==============*/
+     app.post('/getfilterByLocation', common_controller.getdataByLocation);   
+
 
 }

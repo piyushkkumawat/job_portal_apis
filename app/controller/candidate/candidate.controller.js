@@ -308,7 +308,7 @@ exports.filter = (req, res) => {
                 left join company_type  ON (company_type.id =  company_info.company_type)
                 left join employement_type ON(employement_type.id=job_alert.typeof_employement)
                 left join shifts ON(shifts.id = jobpostcollection.shift)
-                where (jobpostcollection.last_date_to_apply >= '`+dateString+`')
+                where (jobpostcollection.date_of_post >= '`+dateString+`')
                 and user.role_type = 1
                 and
                 (
@@ -418,7 +418,7 @@ exports.filter = (req, res) => {
                 left join job_alert  ON (job_alert.user_id =  jobpostcollection.user_id)
                 left join company_type  ON (company_type.id =  company_info.company_type)
                 left join employement_type ON(employement_type.id=job_alert.typeof_employement)
-                where (jobpostcollection.last_date_to_apply >= '`+dateString+`')
+                where (jobpostcollection.date_of_post >= '`+dateString+`')
                 and user.role_type = 1
                 
                 `;

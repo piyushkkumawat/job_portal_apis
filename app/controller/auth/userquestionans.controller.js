@@ -33,7 +33,7 @@ exports.create = (req, res) => {
                 question_id: questionVal,
                 answer: answerIdArray[key],
             });
-            newUserQuestionAns.save(function (err) {
+            newUserQuestionAns.save(err=> {
                 return res.json({
                     error: err,
                     message: "Something went to wrong"
